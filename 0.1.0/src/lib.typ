@@ -105,17 +105,17 @@
         columns: (auto, 8em, 8em, 4em, 1fr, 7em),
         stroke: 0.5pt,
         inset: (left: _ufac-syllabus-cell-inset * 1.25, right: _ufac-syllabus-cell-inset * 1.25),
-      [*Centro:*], table.cell(colspan: 5, academic-center),
-      [*Curso:*], table.cell(colspan: 5, course),
-      [*Disciplina:*], table.cell(colspan: 5, subject),
-      [*Codigo:*], table.cell(align: center, subject-code),
-      [*Carga horaria:*], table.cell(align: center, subject-hours),
-      [*Creditos:*], table.cell(align: center, credits.join(" - ")),
-      [*Pre-requisitos:*], table.cell(colspan: 2, align: center, prerequisites.join(", ")),
-      table.cell(colspan: 2)[*Semestre/Ano letivo:*], table.cell(align: center)[#semester.at(1)o/#semester.at(0)],
-      [*Professor:*], table.cell(colspan: 3, instructor),
-      [*Titulacao:*], table.cell(align: center, instructor-degree),
-      [*Horario:*], table.cell(colspan: 5, align: center, subject-datetime),
+        [*Centro:*], table.cell(colspan: 5, academic-center),
+        [*Curso:*], table.cell(colspan: 5, course),
+        [*Disciplina:*], table.cell(colspan: 5, subject),
+        [*Codigo:*], table.cell(align: center, subject-code),
+        [*Carga horaria:*], table.cell(align: center, subject-hours),
+        [*Creditos:*], table.cell(align: center, credits.join(" - ")),
+        [*Pre-requisitos:*], table.cell(colspan: 2, align: center, prerequisites.join(", ")),
+        table.cell(colspan: 2)[*Semestre/Ano letivo:*], table.cell(align: center)[#semester.at(1)o/#semester.at(0)],
+        [*Professor:*], table.cell(colspan: 3, instructor),
+        [*Titulacao:*], table.cell(align: center, instructor-degree),
+        [*Horario:*], table.cell(colspan: 5, align: center, subject-datetime),
       )
     ],
     _ufac-syllabus-section(note: [Síntese do conteúdo da disciplina que consta no Projeto Pedagógico do Curso])[Ementa],
@@ -180,8 +180,10 @@
       *Bibliografia complementar* \
       #complementary-bibliography
     ],
-    _ufac-syllabus-cell()[*Aprovação no Colegiado de Curso:* #_ufac-syllabus-note[Estatuto, Artigo 34, alínea c e Regimento Geral da UFAC, Artigos 59 e Art. 67- Parágrafo 3°] \
-    *Data:* \_\_/\_\_/\_\_\_\_\_
-    ]
+    _ufac-syllabus-cell()[*Aprovação no Colegiado de Curso:* #_ufac-syllabus-note[Estatuto, Artigo 34, alínea c e Regimento Geral da UFAC, Artigos 59 e Art. 67- Parágrafo 3°]
+
+
+      *Data:* #"___/___/______".
+    ],
   )
 }
