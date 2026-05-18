@@ -1,4 +1,4 @@
-﻿#let _ufac-syllabus-cell-inset = 0.45em
+#let _ufac-syllabus-cell-inset = 0.45em
 
 #let _ufac-syllabus-cell(body, inset: _ufac-syllabus-cell-inset, cell-fill: none, cell-align: none) = grid.cell(
   inset: inset,
@@ -84,7 +84,52 @@
   set text(lang: "pt", font: "Tex Gyre Heros", size: 12pt)
   set par(justify: true)
 
-  grid(
+  let total-meetings = program-content.fold(0, (total, content) => total + content.meetings)
+
+  // Renders the inner program-content table for a slice of items
+  let render-pc-table(items, show-total: false) = table(
+    columns: (1fr, 8em),
+    stroke: 1.5pt,
+    inset: _ufac-syllabus-cell-inset,
+    align: (left + horizon, center + horizon),
+    table.header(table.cell(align: center)[*UNIDADES TEMÁTICAS*], [*C/H*]),
+    ..items
+      .map(content => _ufac-syllabus-program-content-unit(
+        content.title,
+        content.meetings,
+        topics: content.at("topics", default: []),
+        isTopic: content.at("isTopic", default: true),
+      ))
+      .flatten(),
+    ..if show-total {
+      (
+        [*Carga horária total:*],
+        [
+          #total-meetings encontros \
+          #(total-meetings * 2) aulas \
+          #_ufac-syllabus-convert-meetings-to-hours(total-meetings)
+        ],
+      )
+    } else {
+      ()
+    },
+  )
+
+  // Split program-content into segments at every break-after: true entry
+  let segments = {
+    let segs = ()
+    let start = 0
+    for (i, c) in program-content.enumerate() {
+      if c.at("break-after", default: false) {
+        segs.push(program-content.slice(start, i + 1))
+        start = i + 1
+      }
+    }
+    segs.push(program-content.slice(start))
+    segs
+  }
+
+  let pre-cells = (
     grid.cell(stroke: 1.5pt, inset: 0pt)[
       #grid(
         columns: (4cm, 1fr),
@@ -134,32 +179,9 @@
     _ufac-syllabus-section(
       note: [Detalhamento da ementa em unidades de estudo, com distribuição de horas para cada unidade],
     )[Conteúdo programático],
-    _ufac-syllabus-cell(inset: 0pt)[
-      #table(
-        columns: (1fr, 8em),
-        stroke: 1.5pt,
-        inset: _ufac-syllabus-cell-inset,
-        align: (left + horizon, center + horizon),
-        table.header(table.cell(align: center)[*UNIDADES TEMÁTICAS*], [*C/H*]),
-        ..program-content
-          .map(content => _ufac-syllabus-program-content-unit(
-            content.title,
-            content.meetings,
-            topics: content.at("topics", default: []),
-            isTopic: content.at("isTopic", default: true),
-          ))
-          .flatten(),
-        [*Carga horária total:*],
-        [
-          #let total-meetings = program-content.fold(0, (total, content) => total + content.meetings)
-          #let total-classes = total-meetings * 2
-          #let total-hours = _ufac-syllabus-convert-meetings-to-hours(total-meetings)
-          #total-meetings encontros \
-          #total-classes aulas \
-          #total-hours
-        ],
-      )
-    ],
+  )
+
+  let post-cells = (
     _ufac-syllabus-section(
       note: [Descrição de como a disciplina será desenvolvida, especificando-se as técnicas de ensino a serem utilizadas],
     )[Procedimentos metodológicos],
@@ -186,4 +208,32 @@
       *Data:* #"___/___/______".
     ],
   )
+
+  if segments.len() == 1 {
+    // No forced breaks — original single-grid layout
+    grid(
+      ..pre-cells,
+      _ufac-syllabus-cell(inset: 0pt)[#render-pc-table(segments.at(0), show-total: true)],
+      ..post-cells,
+    )
+  } else {
+    // First grid: header sections + first program-content segment
+    grid(
+      ..pre-cells,
+      _ufac-syllabus-cell(inset: 0pt)[#render-pc-table(segments.at(0))],
+    )
+    // Middle segments (more than one break-after)
+    for i in range(1, segments.len() - 1) {
+      pagebreak()
+      grid(
+        _ufac-syllabus-cell(inset: 0pt)[#render-pc-table(segments.at(i))],
+      )
+    }
+    // Last segment + rest of document
+    pagebreak()
+    grid(
+      _ufac-syllabus-cell(inset: 0pt)[#render-pc-table(segments.last(), show-total: true)],
+      ..post-cells,
+    )
+  }
 }
