@@ -14,6 +14,10 @@
 
 #let _ufac-syllabus-note(body) = text(size: 0.65em)[(#body).]
 
+#let months = ("janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro")
+
+#let get-month-name(date) = months.at(date.month() - 1)
+
 #let _ufac-syllabus-section-counter = counter("ufac-syllabus-section")
 #let _ufac-syllabus-topic-counter = counter("ufac-syllabus-topic")
 
@@ -204,8 +208,17 @@
     ],
     _ufac-syllabus-cell()[*Aprovação no Colegiado de Curso:* #_ufac-syllabus-note[Estatuto, Artigo 34, alínea c e Regimento Geral da UFAC, Artigos 59 e Art. 67- Parágrafo 3°]
 
+    #let data = datetime.today()
 
-      *Data:* #"___/___/______".
+    #align(center)[
+    #v(1em)
+    Rio Branco, #data.day() de #get-month-name(data) de #data.year()\
+    Local e data
+    
+    #v(5em)
+    Nome e assinatura do professor
+    #v(1em)
+    ]
     ],
   )
 
