@@ -161,7 +161,7 @@
         [*Carga horaria:*], table.cell(align: center, subject-hours),
         [*Creditos:*], table.cell(align: center, credits.join(" - ")),
         [*Pre-requisitos:*], table.cell(colspan: 2, align: center, prerequisites.join(", ")),
-        table.cell(colspan: 2)[*Semestre/Ano letivo:*], table.cell(align: center)[#semester.at(1)o/#semester.at(0)],
+        table.cell(colspan: 2)[*Semestre/Ano letivo:*], table.cell(align: center)[#semester.at(1)º/#semester.at(0)],
         [*Professor:*], table.cell(colspan: 3, instructor),
         [*Titulacao:*], table.cell(align: center, instructor-degree),
         [*Horario:*], table.cell(colspan: 5, align: center, subject-datetime),
