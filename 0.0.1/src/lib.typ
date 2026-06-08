@@ -31,14 +31,14 @@
   ]
 ]
 
-#let _ufac-syllabus-convert-meetings-to-hours(meetings) = {
-  let total_minutes = meetings * 2 * 50
+#let _ufac-syllabus-convert-meetings-to-hours(meetings, class-duration, classes-per-meeting) = {
+  let total_minutes = meetings * classes-per-meeting * class-duration
   let hours = calc.floor(total_minutes / 60)
   let minutes = calc.rem(total_minutes, 60)
   str(hours) + "h" + if minutes < 10 { "0" } else { "" } + str(minutes) + "m"
 }
 
-#let _ufac-syllabus-program-content-unit(title, meetings, topics: [], isTopic: false) = (
+#let _ufac-syllabus-program-content-unit(title, meetings, topics: [], isTopic: false, subject-classes-per-meeting: 2, subject-class-duration: 50) = (
   [
     #if (isTopic == true) [
       #_ufac-syllabus-topic-counter.step()
@@ -50,10 +50,12 @@
   ],
   [
     #meetings encontros \
-    #(meetings * 2) aulas \
-    #_ufac-syllabus-convert-meetings-to-hours(meetings)
+    #(meetings * subject-classes-per-meeting) aulas \
+    #_ufac-syllabus-convert-meetings-to-hours(meetings, subject-class-duration, subject-classes-per-meeting)
   ],
 )
+
+
 
 #let ufac-syllabus(
   academic-center: "Centro de Ciências Exatas e Tecnológicas",
@@ -64,8 +66,11 @@
   subject: "Nome da disciplina",
   subject-code: "CCETXXX",
   subject-hours: "60h",
+  subject-class-duration: 50, // 50 minutes
+  subject-classes-per-meeting: 2, // 2 classes of 50 minutes each per meeting
   subject-datetime: "13h20 - 15h00 (Tercas e Quintas)",
   credits: ("4", "0", "0"),
+  date: datetime.today(),
   prerequisites: (),
   syllabus: [Ementa da disciplina],
   main-objective: "Objetivo geral da disciplina",
@@ -102,6 +107,8 @@
         content.title,
         content.meetings,
         topics: content.at("topics", default: []),
+        subject-classes-per-meeting: subject-classes-per-meeting,
+        subject-class-duration: subject-class-duration,
         isTopic: content.at("isTopic", default: true),
       ))
       .flatten(),
@@ -110,8 +117,8 @@
         [*Carga horária total:*],
         [
           #total-meetings encontros \
-          #(total-meetings * 2) aulas \
-          #_ufac-syllabus-convert-meetings-to-hours(total-meetings)
+          #(total-meetings * subject-classes-per-meeting) aulas \
+          #_ufac-syllabus-convert-meetings-to-hours(total-meetings, subject-class-duration, subject-classes-per-meeting)
         ],
       )
     } else {
